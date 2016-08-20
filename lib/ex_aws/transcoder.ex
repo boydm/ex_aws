@@ -23,8 +23,11 @@ defmodule ExAws.Transcoder do
   ######################
 
   @spec create_job(job_input :: job_input) :: ExAws.Operation.JSON.t
-  def create_job( job_input_data ) do
-    request(:post, :jobs, job_input_data)
+  @spec create_job(job_input :: binary) :: ExAws.Operation.JSON.t
+  def create_job( job_input_data ) when is_map(job_input_data) do
+    data = job_input_data
+      |> normalize_opts
+    request(:post, "jobs", data)
   end
 
 
@@ -36,7 +39,7 @@ defmodule ExAws.Transcoder do
     #path = [path, "?", params |> URI.encode_query] |> IO.iodata_to_binary
     ExAws.Operation.JSON.new(:elastictranscoder, %{
       http_method: http_method,
-      path: @namespace <> to_string(path),
+      path: @namespace <> path,
       data: data,
       headers: [{"content-type", "application/json"} | headers],
       before_request: before_request,
