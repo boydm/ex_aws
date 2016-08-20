@@ -36,7 +36,7 @@ defmodule ExAws.Transcoder do
     #path = [path, "?", params |> URI.encode_query] |> IO.iodata_to_binary
     ExAws.Operation.JSON.new(:lambda, %{
       http_method: http_method,
-      path: @namespace <> path,
+      path: @namespace <> to_string(path),
       data: data,
       headers: [{"content-type", "application/json"} | headers],
       before_request: before_request,
