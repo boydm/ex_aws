@@ -69,6 +69,12 @@ defmodule ExAws.Config.Defaults do
       region: "us-east-1",
       port: 80
     },
+    transcoder: %{
+      scheme: "https://",
+      host: {"$region", "elastictranscoder.$region.amazonaws.com"},
+      region: "us-east-1",
+      port: 80
+    },
   }
 
   @doc """
