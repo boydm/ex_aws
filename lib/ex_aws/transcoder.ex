@@ -33,7 +33,7 @@ defmodule ExAws.Transcoder do
 
   @spec get_job(job_id :: binary) :: ExAws.Operation.JSON.t
   def get_job( job_id ) do
-    request(:get, "jobs/" <> job_id, nil)
+    request(:get, "jobs/" <> job_id, %{})
   end
 
 
