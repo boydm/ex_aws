@@ -5,7 +5,7 @@ defmodule ExAws.Transcoder do
   https://docs.aws.amazon.com/elastictranscoder/latest/developerguide/api-reference.html
   """
 
-  import ExAws.Utils, only: [camelize_key: 1]
+  import ExAws.Utils, only: [camelize_keys: 1]
   require Logger
 
   @namespace "/2012-09-25/"
@@ -178,33 +178,35 @@ defmodule ExAws.Transcoder do
     ExAws.Operation.JSON.new(:elastictranscoder, %{
       http_method: http_method,
       path: @namespace <> path,
-      data: normalize_data(data),
+      data: normalize_opts(data),
       headers: [{"content-type", "application/json"} | headers],
       before_request: before_request,
     })
   end
 
   # needs to be made recursive
-#  defp normalize_opts(opts) do
-#    opts
-#    |> Enum.into(%{})
-#    |> camelize_keys
-#  end
-
-  defp normalize_data(data) when is_nil(data), do: %{}
-  defp normalize_data(data) when is_list(data), do: normalize_data(Enum.into(data, %{}))
-  defp normalize_data(data) when is_map(data) do
-    Enum.reduce(data, %{}, fn({key, value}, acc) ->
-      key = camelize_key(key)
-      value = cond do
-        is_map(value) ->  normalize_data(value)
-        is_list(value) -> normalize_data(value)
-        is_atom(value) -> to_string(value)
-        true -> value
-      end
-      Map.put(acc, key, value)
-    end)
+  defp normalize_opts(opts) when is_nil(opts),  do: %{}
+  defp normalize_opts(opts) when is_list(opts), do: normalize_opts(Enum.into(opts, %{}))
+  defp normalize_opts(opts) when is_map(opts)do
+    opts
+    #|> Enum.into(%{})
+    |> camelize_keys
   end
+
+#  defp normalize_data(data) when is_nil(data), do: %{}
+#  defp normalize_data(data) when is_list(data), do: normalize_data(Enum.into(data, %{}))
+#  defp normalize_data(data) when is_map(data) do
+#    Enum.reduce(data, %{}, fn({key, value}, acc) ->
+#      key = camelize_key(key)
+#      value = cond do
+#        is_map(value) ->  normalize_data(value)
+#        is_list(value) -> camelize_keys(value)
+#        is_atom(value) -> to_string(value)
+#        true -> value
+#      end
+#      Map.put(acc, key, value)
+#    end)
+#  end
 
 end
 
