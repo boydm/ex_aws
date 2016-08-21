@@ -5,7 +5,7 @@ defmodule ExAws.Transcoder do
   https://docs.aws.amazon.com/elastictranscoder/latest/developerguide/api-reference.html
   """
 
-  import ExAws.Utils, only: [camelize_keys: 1, upcase: 1]
+  import ExAws.Utils, only: [camelize_keys: 1]
   require Logger
 
   @namespace "/2012-09-25/"
@@ -17,11 +17,14 @@ defmodule ExAws.Transcoder do
   @type preset_id :: binary
 
 
+  @type list_jobs_opts :: [
+    ascending: boolean,
+    page_token: binary
+  ]
 
 
   ## Jobs
   ######################
-
 
   @spec create_job(job_input :: job_input) :: ExAws.Operation.JSON.t
   def create_job( job_input_data ) do
@@ -30,11 +33,30 @@ defmodule ExAws.Transcoder do
     request(:post, "jobs", data)
   end
 
-
   @spec get_job(job_id :: binary) :: ExAws.Operation.JSON.t
   def get_job( job_id ) do
     request(:get, "jobs/" <> job_id, %{})
   end
+
+  @spec cancel_job(job_id :: binary) :: ExAws.Operation.JSON.t
+  def cancel_job( job_id ) do
+    request(:delete, "jobs/" <> job_id, %{})
+  end
+  
+  @spec list_jobs_by_pipeline(pipeline_id :: binary) :: ExAws.Operation.JSON.t
+  @spec list_jobs_by_pipeline(pipeline_id :: binary, opts :: list_jobs_opts) :: ExAws.Operation.JSON.t
+  def list_jobs_by_pipeline( pipeline_id, opts \\ [] ) do
+    request(:get, "jobsByPipeline/" <> pipeline_id, normalize_opts(opts) )
+  end
+  
+  @spec list_jobs_by_status(status :: binary) :: ExAws.Operation.JSON.t
+  @spec list_jobs_by_status(status :: binary, opts :: list_jobs_opts) :: ExAws.Operation.JSON.t
+  def list_jobs_by_status( status, opts \\ [] ) do
+    request(:get, "jobsByStatus/" <> status, normalize_opts(opts) )
+  end
+  
+
+
 
 
   ########################
