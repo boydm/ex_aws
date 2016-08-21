@@ -22,12 +22,18 @@ defmodule ExAws.Transcoder do
   ## Jobs
   ######################
 
+
   @spec create_job(job_input :: job_input) :: ExAws.Operation.JSON.t
-  @spec create_job(job_input :: binary) :: ExAws.Operation.JSON.t
-  def create_job( job_input_data ) when is_map(job_input_data) do
+  def create_job( job_input_data ) do
     data = job_input_data
       |> normalize_opts
     request(:post, "jobs", data)
+  end
+
+
+  @spec get_job(job_id :: binary) :: ExAws.Operation.JSON.t
+  def get_job( job_id ) do
+    request(:get, "jobs/" <> job_id, nil)
   end
 
 
